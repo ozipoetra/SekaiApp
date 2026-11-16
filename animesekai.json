@@ -1,13 +1,13 @@
 {
   "app": "sekai",
-  "version": "1.0.0",
-  "versionCode": 1000000,
-  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.0.0",
+  "version": "1.0.1",
+  "versionCode": 1000001,
+  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.0.1",
   "mandatory": false,
   "publishedAt": "2026-11-17",
   "changelog": [
-    "Sekai now checks for updates on launch and points you to the release page when a new version is out.",
-    "Pages fall back to Sekai's own proxy server when your network is blocked by Cloudflare, so browsing keeps working while on a VPN.",
-    "Added an About tab on the Profile page, with the app version and changelog."
+    "New AniList-powered trending carousel with wide banner art and romaji titles.",
+    "Profile page redesigned: stat cards, a modern hero header, and a tab bar that scrolls on small screens.",
+    "Mobile hero is shorter now, so Continue Watching peeks into the first screen."
   ]
 }
