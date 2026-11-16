@@ -22,7 +22,10 @@ installs its own update — Play Protect flags apps that do.
 | --- | --- |
 | `version` | Latest release version, `x.y.z`. The popup appears when this is greater than the installed version. |
 | `versionCode` | Android versionCode of that release. Tauri derives it from `version` (major*1000000 + minor*1000 + patch), so it rises automatically with every version bump — never set it by hand. |
-| `apkUrl` | Direct download URL of the APK (a release asset in this repo). |
+| `apkUrl` | Direct download URL of the Android arm64 APK (a release asset in this repo). |
+| `apkUrlArmv7` | Direct download URL of the Android 32-bit (armv7) APK. |
+| `windowsUrl` | Direct download URL of the Windows x64 installer (.exe). |
+| `linuxDebUrl` / `linuxRpmUrl` | Direct download URLs of the Linux x64 packages. |
 | `notesUrl` | Release page URL (fallback / "what's new" link). |
 | `mandatory` | `true` hides the "Later" button in the popup. |
 | `publishedAt` | Release date, `YYYY-MM-DD`. |
@@ -32,11 +35,14 @@ installs its own update — Play Protect flags apps that do.
 
 Automated (the usual way): in the `sekai` repo, bump `version` in
 `src-tauri/tauri.conf.json` (the versionCode is derived from it
-automatically), commit and push, then run the **Publish Android release** workflow
+automatically), commit and push, then run the **Publish release** workflow
 (Actions tab, manual dispatch; fill in the changelog lines, one per
-line). It builds the signed APK, creates the release here with the
-APK attached, and updates `animesekai.json` — no manual steps below
-needed. (It needs the `DATA_REPO_TOKEN` secret in the sekai repo: a
+line). It builds every platform (Android arm64 + armv7, Windows x64,
+Linux deb + rpm), creates ONE release here with all six assets
+attached (`sekai-v<version>-arm64.apk`, `-armv7.apk`,
+`-windows-x64-setup.exe`, `-windows-x64.msi`, `-linux-x64.deb`,
+`-linux-x64.rpm`), and updates `animesekai.json` — no manual steps
+below needed. (It needs the `DATA_REPO_TOKEN` secret in the sekai repo: a
 fine-grained PAT with access to this repo, Contents: Read and write.)
 
 Manual fallback:
