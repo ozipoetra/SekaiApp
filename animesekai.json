@@ -10,6 +10,6 @@
   "mandatory": false,
   "publishedAt": "2026-11-16",
   "changelog": [
-    "First versioned release: Sekai now checks this file for updates and can download and install them in-app."
+    "First versioned release: Sekai now checks this file for updates and points you to the release page when a new version is out."
   ]
 }
