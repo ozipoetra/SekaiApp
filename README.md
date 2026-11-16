@@ -1,6 +1,6 @@
 # data
 
-Public metadata files read by ozipoetra's apps at runtime.
+Public metadata files
 
 ## animesekai.json — Sekai update feed
 
