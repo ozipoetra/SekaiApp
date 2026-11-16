@@ -28,12 +28,22 @@ of `apkUrl` (Android), followed by the system installer.
 
 ### Publishing a release
 
-1. In the `sekai` repo: bump `version` in `src-tauri/tauri.conf.json`
-   AND `bundle.android.versionCode` (+1), commit, push, wait for CI.
-2. Download the `sekai-arm64-release` artifact (the universal APK).
-3. Here in `data`: create a release tagged `v<version>` and attach the
-   APK as an asset (keep the asset name stable, e.g.
+Automated (the usual way): in the `sekai` repo, bump `version` in
+`src-tauri/tauri.conf.json` AND `bundle.android.versionCode` (+1),
+commit and push, then run the **Publish Android release** workflow
+(Actions tab, manual dispatch; fill in the changelog lines, one per
+line). It builds the signed APK, creates the release here with the
+APK attached, and updates `animesekai.json` — no manual steps below
+needed. (It needs the `DATA_REPO_TOKEN` secret in the sekai repo: a
+fine-grained PAT with access to this repo, Contents: Read and write.)
+
+Manual fallback:
+
+1. Download the `sekai-arm64-release` artifact from the sekai repo's
+   CI (the universal APK).
+2. Here in `data`: create a release tagged `v<version>` and attach
+   the APK as an asset (keep the asset name stable, e.g.
    `sekai-v<version>.apk`).
-4. Update `animesekai.json`: new `version`, `versionCode`, `apkUrl`
+3. Update `animesekai.json`: new `version`, `versionCode`, `apkUrl`
    (pointing at the new asset), `notesUrl`, `publishedAt`, `changelog`.
-5. Commit. Installed apps pick the update up on their next launch.
+4. Commit. Installed apps pick the update up on their next launch.
