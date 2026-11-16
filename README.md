@@ -11,8 +11,10 @@ https://raw.githubusercontent.com/ozipoetra/data/main/animesekai.json
 ```
 
 When `version` here is newer than the installed app's version, the app
-shows an update popup with the changelog and offers an in-app download
-of `apkUrl` (Android), followed by the system installer.
+shows an update popup with the changelog; its button opens the
+release page (`notesUrl`) in the browser, where the APK is downloaded
+and installed the normal way. The app deliberately never downloads or
+installs its own update — Play Protect flags apps that do.
 
 ### Fields
 
