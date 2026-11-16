@@ -19,7 +19,7 @@ of `apkUrl` (Android), followed by the system installer.
 | Field | Meaning |
 | --- | --- |
 | `version` | Latest release version, `x.y.z`. The popup appears when this is greater than the installed version. |
-| `versionCode` | Android versionCode of that release. Must increase with every release, together with `version` in the app's `tauri.conf.json`. |
+| `versionCode` | Android versionCode of that release. Tauri derives it from `version` (major*1000000 + minor*1000 + patch), so it rises automatically with every version bump — never set it by hand. |
 | `apkUrl` | Direct download URL of the APK (a release asset in this repo). |
 | `notesUrl` | Release page URL (fallback / "what's new" link). |
 | `mandatory` | `true` hides the "Later" button in the popup. |
@@ -29,8 +29,8 @@ of `apkUrl` (Android), followed by the system installer.
 ### Publishing a release
 
 Automated (the usual way): in the `sekai` repo, bump `version` in
-`src-tauri/tauri.conf.json` AND `bundle.android.versionCode` (+1),
-commit and push, then run the **Publish Android release** workflow
+`src-tauri/tauri.conf.json` (the versionCode is derived from it
+automatically), commit and push, then run the **Publish Android release** workflow
 (Actions tab, manual dispatch; fill in the changelog lines, one per
 line). It builds the signed APK, creates the release here with the
 APK attached, and updates `animesekai.json` — no manual steps below
