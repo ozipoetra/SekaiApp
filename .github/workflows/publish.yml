@@ -1,0 +1,201 @@
+name: Publish release
+
+# Manual multi-platform publish pipeline for the Sekai updater,
+# hosted in THIS (public) repo alongside the Build workflow —
+# the private ozipoetra/sekai repo's Actions are billing-limited,
+# and releases/feed live here anyway, so the built-in
+# GITHUB_TOKEN now does every write in this repo. The only
+# cross-repo access left is reading the sekai source, via the
+# read-only SEKAI_REPO_TOKEN secret.
+#
+# Run from the Actions tab AFTER bumping `version` in sekai's
+# src-tauri/tauri.conf.json and pushing to its main (the Android
+# versionCode is derived from the version automatically). A fast
+# precheck guards against re-publishing the same version, then
+# the shared Build workflow builds every platform; the publish
+# job collects every artifact into ONE GitHub Release here and
+# updates animesekai.json — installed apps then offer the update
+# on their next launch and open that release page in the browser.
+#
+# Release assets are named:
+#   sekai-v<version>.apk              (Android universal: arm64 + armv7)
+#   sekai-v<version>-windows-x64.msi  (Windows ships the MSI only)
+#   sekai-v<version>-linux-x64.deb / sekai-v<version>-linux-x64.rpm
+#
+# Secrets required in THIS repo: SEKAI_REPO_TOKEN (fine-grained
+# PAT, ozipoetra/sekai only, Contents: Read-only), the ANDROID_KEY_*
+# signing trio, and TMDB_API_KEY (all consumed by the Build workflow).
+
+on:
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: "Changelog for the update popup (one entry per line)"
+        required: false
+        type: string
+      mandatory:
+        description: "Mandatory update (hides the popup's Later button)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  precheck:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.appver.outputs.version }}
+      version_code: ${{ steps.appver.outputs.version_code }}
+    steps:
+      - name: Check source token is configured
+        env:
+          SEKAI_REPO_TOKEN: ${{ secrets.SEKAI_REPO_TOKEN }}
+        run: |
+          if [ -z "$SEKAI_REPO_TOKEN" ]; then
+            echo "::error::Secret SEKAI_REPO_TOKEN is not set. Create a fine-grained PAT with access to ozipoetra/sekai (Contents: Read-only) and add it as a secret in this repo."
+            exit 1
+          fi
+
+      - name: Checkout Sekai source (private repo, read-only token)
+        uses: actions/checkout@v7
+        with:
+          repository: ozipoetra/sekai
+          token: ${{ secrets.SEKAI_REPO_TOKEN }}
+          ref: main
+          path: sekai-src
+
+      - name: Read app version
+        id: appver
+        run: |
+          VERSION=$(jq -r .version sekai-src/src-tauri/tauri.conf.json)
+          # Tauri derives the Android versionCode from the semver when
+          # bundle.android.versionCode is unset:
+          # major*1000000 + minor*1000 + patch (1.0.0 -> 1000000).
+          # Mirror that here for the feed.
+          IFS=. read -r VMAJ VMIN VPAT <<< "$VERSION"
+          VCODE=$((10#${VMAJ:-0} * 1000000 + 10#${VMIN:-0} * 1000 + 10#${VPAT:-0}))
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VCODE" >> "$GITHUB_OUTPUT"
+          echo "Publishing Sekai v$VERSION (versionCode $VCODE)"
+
+      - name: Checkout data repo
+        uses: actions/checkout@v7
+        with:
+          path: data-repo
+
+      - name: Guard — feed must not already carry this version
+        run: |
+          FEED_VERSION=$(jq -r .version data-repo/animesekai.json)
+          if [ "$FEED_VERSION" = "${{ steps.appver.outputs.version }}" ]; then
+            echo "::error::animesekai.json already says ${FEED_VERSION}. Bump version in sekai's src-tauri/tauri.conf.json and push first."
+            exit 1
+          fi
+
+  build:
+    needs: precheck
+    uses: ./.github/workflows/build.yml
+    with:
+      ref: main
+    secrets: inherit
+
+  publish:
+    needs: [precheck, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Android APK (universal)
+        uses: actions/download-artifact@v7
+        with:
+          name: sekai-android-release
+          path: staging/sekai-android-release
+
+      - name: Download Windows installers
+        uses: actions/download-artifact@v7
+        with:
+          name: sekai-windows
+          path: staging/sekai-windows
+
+      - name: Download Linux packages
+        uses: actions/download-artifact@v7
+        with:
+          name: sekai-linux
+          path: staging/sekai-linux
+
+      - name: Stage release assets
+        run: |
+          V="${{ needs.precheck.outputs.version }}"
+          mkdir -p out
+          cp staging/sekai-android-release/app-universal-release.apk "out/sekai-v${V}.apk"
+          # Artifact layouts have varied between a {msi}/ subdir and
+          # flat files — locate each package instead of assuming.
+          cp "$(find staging/sekai-windows -name '*.msi' | head -1)" "out/sekai-v${V}-windows-x64.msi"
+          cp "$(find staging/sekai-linux -name '*.deb' | head -1)" "out/sekai-v${V}-linux-x64.deb"
+          cp "$(find staging/sekai-linux -name '*.rpm' | head -1)" "out/sekai-v${V}-linux-x64.rpm"
+          ls -la out
+
+      - name: Checkout data repo
+        uses: actions/checkout@v7
+        with:
+          path: data-repo
+
+      - name: Create release and upload assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CHANGELOG_INPUT: ${{ inputs.changelog }}
+        run: |
+          V="${{ needs.precheck.outputs.version }}"
+          NOTES=$(printf '%s' "$CHANGELOG_INPUT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+          if [ -z "$NOTES" ]; then NOTES="Bug fixes and improvements."; fi
+          if gh release view "v${V}" --repo ozipoetra/data > /dev/null 2>&1; then
+            gh release upload "v${V}" out/* --repo ozipoetra/data --clobber
+          else
+            gh release create "v${V}" out/* \
+              --repo ozipoetra/data \
+              --title "Sekai v${V}" \
+              --notes "$NOTES"
+          fi
+          echo "Release: https://github.com/ozipoetra/data/releases/tag/v${V}"
+
+      - name: Update animesekai.json and push
+        env:
+          CHANGELOG_INPUT: ${{ inputs.changelog }}
+        run: |
+          V="${{ needs.precheck.outputs.version }}"
+          VCODE="${{ needs.precheck.outputs.version_code }}"
+          MANDATORY="${{ inputs.mandatory }}"
+          TODAY=$(date +%F)
+          NOTES_URL="https://github.com/ozipoetra/data/releases/tag/v${V}"
+          CHANGELOG_JSON=$(printf '%s' "$CHANGELOG_INPUT" | jq -R 'split("\n") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
+          if [ "$CHANGELOG_JSON" = "[]" ]; then CHANGELOG_JSON='["Bug fixes and improvements."]'; fi
+          cd data-repo
+          jq --arg v "$V" --argjson vc "$VCODE" \
+             --arg notes "$NOTES_URL" \
+             --argjson mand "$MANDATORY" --arg date "$TODAY" \
+             --argjson cl "$CHANGELOG_JSON" \
+             'del(.apkUrl, .windowsUrl, .linuxDebUrl, .linuxRpmUrl, .apkUrlArmv7) | .version = $v | .versionCode = $vc | .notesUrl = $notes | .mandatory = $mand | .publishedAt = $date | .changelog = $cl' \
+             animesekai.json > animesekai.json.tmp
+          mv animesekai.json.tmp animesekai.json
+          cat animesekai.json
+          git config user.name "ozipoetra"
+          git config user.email "41739417+ozipoetra@users.noreply.github.com"
+          git add animesekai.json
+          git commit -m "Sekai v${V}"
+          git push
+
+      - name: Summary
+        run: |
+          V="${{ needs.precheck.outputs.version }}"
+          {
+            echo "## Published Sekai v${V}"
+            echo ""
+            echo "- Release: https://github.com/ozipoetra/data/releases/tag/v${V}"
+            echo "- Assets: Android universal APK (arm64 + armv7), Windows x64 (msi), Linux x64 (deb + rpm)"
+            echo "- Feed: https://github.com/ozipoetra/data/blob/main/animesekai.json"
+            echo ""
+            echo "Installed apps will offer this update on their next launch."
+          } >> "$GITHUB_STEP_SUMMARY"
