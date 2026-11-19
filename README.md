@@ -51,3 +51,28 @@ Manual fallback:
 3. Update `animesekai.json`: new `version`, `versionCode`,
    `notesUrl` (the release page), `publishedAt`, `changelog`.
 4. Commit. Installed apps pick the update up on their next launch.
+
+## sponsor.json — Sekai support prompt
+
+Sekai fetches this file on launch:
+
+```
+https://raw.githubusercontent.com/ozipoetra/data/main/sponsor.json
+```
+
+When the prompt is due, the app shows a support modal (title, message
+and link buttons from this file). It never appears while an update
+popup is offered — updates always win — and the About tab's Support
+button can open it on demand. Edit this file to change the copy or
+links; no app release is needed.
+
+### Fields
+
+| Field | Meaning |
+| --- | --- |
+| `enabled` | Master switch. `false` = the prompt never auto-shows. |
+| `id` | Campaign id. Dismissals are remembered per id — bump this to show the prompt again to everyone. |
+| `title` | Modal headline. |
+| `message` | Modal body text. |
+| `buttons` | Array of `{label, url}` (https only). The first button is styled primary. Put real donation links here (Saweria, Ko-fi, GitHub Sponsors, ...) whenever they exist. |
+| `cooldownDays` | Days after a dismissal before the prompt may show again for the same `id`. |
