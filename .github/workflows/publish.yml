@@ -170,7 +170,7 @@ jobs:
           MANDATORY="${{ inputs.mandatory }}"
           TODAY=$(date +%F)
           NOTES_URL="https://github.com/ozipoetra/data/releases/tag/v${V}"
-          CHANGELOG_JSON=$(printf '%s' "$CHANGELOG_INPUT" | jq -R 'split("\n") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
+          CHANGELOG_JSON=$(printf '%s' "$CHANGELOG_INPUT" | jq -Rs 'split("\n") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
           if [ "$CHANGELOG_JSON" = "[]" ]; then CHANGELOG_JSON='["Bug fixes and improvements."]'; fi
           cd data-repo
           jq --arg v "$V" --argjson vc "$VCODE" \
