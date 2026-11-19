@@ -8,5 +8,5 @@
     { "label": "GitHub", "url": "https://github.com/ozipoetra" },
     { "label": "Facebook", "url": "https://fb.me/ozip.cf" }
   ],
-  "cooldownDays": 14
+  "cooldownDays": 1
 }
