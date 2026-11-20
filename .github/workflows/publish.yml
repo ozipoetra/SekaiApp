@@ -142,6 +142,9 @@ jobs:
         uses: actions/checkout@v7
         with:
           path: data-repo
+          # Full history: the feed push below rebases onto
+          # origin/main when it moved during the long build.
+          fetch-depth: 0
 
       - name: Create release and upload assets
         env:
@@ -185,7 +188,19 @@ jobs:
           git config user.email "41739417+ozipoetra@users.noreply.github.com"
           git add animesekai.json
           git commit -m "Sekai v${V}"
-          git push
+          # main may have moved during the build (e.g. a
+          # sponsor.json edit) — rebase onto it and retry
+          # instead of failing the whole publish on a
+          # non-fast-forward rejection.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push; then break; fi
+            if [ "$attempt" = "3" ]; then
+              echo "::error::feed push failed after 3 attempts"
+              exit 1
+            fi
+            sleep 5
+          done
 
       - name: Summary
         run: |
