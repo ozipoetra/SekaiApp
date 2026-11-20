@@ -1,16 +1,16 @@
 {
   "app": "sekai",
-  "version": "1.0.0",
-  "versionCode": 1000000,
-  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.0.0",
+  "version": "1.0.1",
+  "versionCode": 1001000,
+  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.0.1",
   "mandatory": false,
-  "publishedAt": "2026-11-19",
+  "publishedAt": "2026-11-20",
   "changelog": [
-    "First public release of Sekai.",
-    "Two libraries in one app: Kuronime for anime and Oppa for dramas and movies, switchable anytime — each catalog stays separate.",
-    "Home rails for every section: Latest, Movies, drama by country, Completed, Top Rated, and the weekly release Schedule with estimated times.",
-    "Custom player: resume where you left off, a quality picker with real codec tags, double-tap seek, and auto-next episode.",
-    "Offline downloads with background downloading and resume.",
-    "English and Bahasa Indonesia interface."
+    "Downloads now run on a native engine: they keep downloading in the background — even with battery saver on — instead of stalling when you leave the app.",
+    "Heads-up: downloads from earlier versions are not carried over and need to be downloaded again.",
+    "Picture-in-picture playback on Android — the PiP window shows just the video.",
+    "Fixed the home carousel staying paused after a touch-and-hold; autoplay resumes when you let go.",
+    "Player polish: tap the center to pause, seeking back from the end screen resumes playback, and the controls hide after 2 seconds.",
+    "Smoother keyboard and TV remote navigation across the app."
   ]
 }
