@@ -1,10 +1,11 @@
 {
   "app": "sekai",
   "enabled": true,
-  "id": "2026-11-launch",
-  "title": "Support Sekai",
-  "message": "Sekai is free, with no ads — built and maintained by one person in his spare time. If it makes your watch time better, consider supporting its development so it keeps getting better.",
+  "id": "2026-11-wa",
+  "title": "Dukung Sekai",
+  "message": "Sekai gratis, tanpa iklan — dibuat dan dirawat oleh satu orang di waktu luangnya. Kalau Sekai bikin waktu nontonmu makin seru, pertimbangkan untuk mendukung pengembangannya supaya Sekai terus jadi lebih baik.",
   "buttons": [
+    { "label": "WhatsApp", "url": "https://wa.me/6283126184340" },
     { "label": "GitHub", "url": "https://github.com/ozipoetra" },
     { "label": "Facebook", "url": "https://fb.me/ozip.cf" }
   ],
