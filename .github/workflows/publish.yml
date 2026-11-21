@@ -18,7 +18,8 @@ name: Publish release
 # on their next launch and open that release page in the browser.
 #
 # Release assets are named:
-#   sekai-v<version>.apk              (Android universal: arm64 + armv7)
+#   sekai-v<version>-arm64.apk / -armv7.apk / -x86_64.apk
+#                                     (Android, one APK per architecture)
 #   sekai-v<version>-windows-x64.msi  (Windows ships the MSI only)
 #   sekai-v<version>-linux-x64.deb / sekai-v<version>-linux-x64.rpm
 #
@@ -108,11 +109,23 @@ jobs:
     needs: [precheck, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download Android APK (universal)
+      - name: Download Android APK (arm64)
         uses: actions/download-artifact@v7
         with:
-          name: sekai-android-release
-          path: staging/sekai-android-release
+          name: sekai-android-arm64
+          path: staging/sekai-android-arm64
+
+      - name: Download Android APK (armv7)
+        uses: actions/download-artifact@v7
+        with:
+          name: sekai-android-armv7
+          path: staging/sekai-android-armv7
+
+      - name: Download Android APK (x86_64)
+        uses: actions/download-artifact@v7
+        with:
+          name: sekai-android-x86_64
+          path: staging/sekai-android-x86_64
 
       - name: Download Windows installers
         uses: actions/download-artifact@v7
@@ -130,7 +143,9 @@ jobs:
         run: |
           V="${{ needs.precheck.outputs.version }}"
           mkdir -p out
-          cp staging/sekai-android-release/app-universal-release.apk "out/sekai-v${V}.apk"
+          cp "$(find staging/sekai-android-arm64 -name '*.apk' | head -1)" "out/sekai-v${V}-arm64.apk"
+          cp "$(find staging/sekai-android-armv7 -name '*.apk' | head -1)" "out/sekai-v${V}-armv7.apk"
+          cp "$(find staging/sekai-android-x86_64 -name '*.apk' | head -1)" "out/sekai-v${V}-x86_64.apk"
           # Artifact layouts have varied between a {msi}/ subdir and
           # flat files — locate each package instead of assuming.
           cp "$(find staging/sekai-windows -name '*.msi' | head -1)" "out/sekai-v${V}-windows-x64.msi"
