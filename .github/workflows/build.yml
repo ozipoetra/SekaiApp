@@ -18,9 +18,10 @@ name: Build
 # (deb + rpm). Artifact names are the contract the publish job
 # collects: sekai-android-release, sekai-windows, sekai-linux.
 #
-# The Android leg builds ONE universal APK carrying both ABIs
-# (--target aarch64 armv7): a single file installs on 64-bit and
-# 32-bit devices alike (Ozi's trade-off call).
+# The Android legs build ONE APK PER ARCHITECTURE (Ozi's
+# call 2026-11-21): arm64, armv7 and x86_64 are separate
+# matrix legs producing separate APKs, so each download
+# carries only its own architecture's native libraries.
 
 on:
   workflow_dispatch:
@@ -49,14 +50,30 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - id: android
-            name: Android universal (arm64 + armv7)
+          - id: android-arm64
+            name: Android arm64
             os: ubuntu-latest
             build_cmd: |
               export NDK_HOME="$ANDROID_HOME/ndk/27.2.12479018"
-              bun run tauri -- android build --target aarch64 armv7
-            artifact_name: sekai-android-release
-            artifact_path: src-tauri/gen/android/app/build/outputs/apk/universal/release/app-universal-release.apk
+              bun run tauri -- android build --target aarch64
+            artifact_name: sekai-android-arm64
+            artifact_path: src-tauri/gen/android/app/build/outputs/apk/*/release/*.apk
+          - id: android-armv7
+            name: Android armv7
+            os: ubuntu-latest
+            build_cmd: |
+              export NDK_HOME="$ANDROID_HOME/ndk/27.2.12479018"
+              bun run tauri -- android build --target armv7
+            artifact_name: sekai-android-armv7
+            artifact_path: src-tauri/gen/android/app/build/outputs/apk/*/release/*.apk
+          - id: android-x86_64
+            name: Android x86_64
+            os: ubuntu-latest
+            build_cmd: |
+              export NDK_HOME="$ANDROID_HOME/ndk/27.2.12479018"
+              bun run tauri -- android build --target x86_64
+            artifact_name: sekai-android-x86_64
+            artifact_path: src-tauri/gen/android/app/build/outputs/apk/*/release/*.apk
           - id: windows
             name: Windows x64
             os: windows-latest
@@ -137,7 +154,7 @@ jobs:
         if: startsWith(matrix.id, 'android')
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android, armv7-linux-androideabi
+          targets: aarch64-linux-android, armv7-linux-androideabi, x86_64-linux-android
 
       - name: Setup Rust (stable)
         if: ${{ !startsWith(matrix.id, 'android') }}
