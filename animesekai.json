@@ -1,17 +1,12 @@
 {
   "app": "sekai",
-  "version": "1.2.0",
-  "versionCode": 1002000,
-  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.2.0",
-  "mandatory": false,
+  "version": "1.2.1",
+  "versionCode": 1002001,
+  "notesUrl": "https://github.com/ozipoetra/SekaiApp/releases/tag/v1.2.1",
+  "mandatory": true,
   "publishedAt": "2026-11-22",
   "changelog": [
-    "Full TV remote and gamepad navigation: D-pad through every page, a sidebar that remembers where you were, and a player that follows the same keys as a keyboard — seek from the video area, walk the controls one by one, and Back leaves fullscreen first.",
-    "Home, Browse and Details load noticeably faster.",
-    "Downloads that failed because a link expired now fetch a fresh link and carry on instead of erroring forever.",
-    "Watch on tablets: the player stays pinned while the series card and episodes sit below it.",
-    "Browse shows placeholder cards while a page loads instead of a lone spinner.",
-    "Desktop: the app asks before closing while downloads are active, and downloads show their progress on the taskbar.",
-    "A friendlier message when an episode is not out yet, instead of a raw playback error."
+    "Sekai has a new GitHub home: github.com/ozipoetra/SekaiApp. This update points the app at it and is required — older versions can no longer check for updates from the old address.",
+    "Everything from 1.2.0 is included: full TV remote navigation, a faster catalog, resumable downloads, and more."
   ]
 }
