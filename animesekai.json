@@ -1,12 +1,12 @@
 {
   "app": "sekai",
-  "version": "1.2.1",
-  "versionCode": 1002001,
-  "notesUrl": "https://github.com/ozipoetra/SekaiApp/releases/tag/v1.2.1",
+  "version": "1.2.2",
+  "versionCode": 1002002,
+  "notesUrl": "https://github.com/ozipoetra/SekaiApp/releases/tag/v1.2.2",
   "mandatory": true,
   "publishedAt": "2026-11-22",
   "changelog": [
-    "Sekai has a new GitHub home: github.com/ozipoetra/SekaiApp. This update points the app at it and is required — older versions can no longer check for updates from the old address.",
-    "Everything from 1.2.0 is included: full TV remote navigation, a faster catalog, resumable downloads, and more."
+    "Fixed the laggy, trailing interface when scrolling fast with a TV remote: focus scrolling is instant now instead of animating after every step.",
+    "Sekai has a new GitHub home: github.com/ozipoetra/SekaiApp. This update points the app at it and is required — older versions can no longer check for updates from the old address."
   ]
 }
