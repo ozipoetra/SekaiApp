@@ -3,7 +3,7 @@
   "version": "1.2.5",
   "versionCode": 1002005,
   "notesUrl": "https://github.com/ozipoetra/SekaiApp/releases/tag/v1.2.5",
-  "mandatory": false,
+  "mandatory": true,
   "publishedAt": "2026-11-22",
   "changelog": [
     "New desktop sidebar: a slim rail that expands when you hover or focus it, with the Kuronime/Oppa switcher at the bottom and a frosted-glass look while open.",
