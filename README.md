@@ -72,6 +72,8 @@ When `version` here is newer than the installed app's version, the app shows an 
 
 Publishing a release: in the private `sekai` repo, bump `version` in `src-tauri/tauri.conf.json` (the versionCode derives automatically), commit and push, then run the **Publish release** workflow here (Actions tab, manual dispatch; changelog lines one per line, and the mandatory flag). It builds every platform (Android arm64/armv7/x86_64 APKs, Windows x64 MSI, Linux deb + rpm), creates one release here with all assets attached, and updates `animesekai.json`.
 
+**Legacy fallback:** installs of Sekai 1.2.0 and older still read their feed from the old address, `ozipoetra/data`. That repo now holds only a mirrored copy of this feed (mandatory) to push those installs forward — after each release here, copy the fresh `animesekai.json` (and `sponsor.json`, if changed) into it.
+
 ### sponsor.json — Sekai support prompt
 
 Sekai fetches this file on launch:
