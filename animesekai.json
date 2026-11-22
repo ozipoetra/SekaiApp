@@ -1,11 +1,11 @@
 {
   "app": "sekai",
-  "version": "1.2.3",
-  "versionCode": 1002003,
-  "notesUrl": "https://github.com/ozipoetra/SekaiApp/releases/tag/v1.2.3",
+  "version": "1.2.4",
+  "versionCode": 1002004,
+  "notesUrl": "https://github.com/ozipoetra/SekaiApp/releases/tag/v1.2.4",
   "mandatory": false,
   "publishedAt": "2026-11-22",
   "changelog": [
-    "Removed the focus outline around the video area in the player — it showed up as a white frame around fullscreen video when navigating with a remote."
+    "The quality menu now holds focus while it is open: opening it lands on the current quality, arrow keys move between the choices only, Back closes the menu, and focus returns to the quality button afterwards."
   ]
 }
