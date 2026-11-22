@@ -1,16 +1,17 @@
 {
   "app": "sekai",
-  "version": "1.0.1",
-  "versionCode": 1000001,
-  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.0.1",
+  "version": "1.2.0",
+  "versionCode": 1002000,
+  "notesUrl": "https://github.com/ozipoetra/data/releases/tag/v1.2.0",
   "mandatory": false,
-  "publishedAt": "2026-11-20",
+  "publishedAt": "2026-11-22",
   "changelog": [
-    "Downloads now run on a native engine: they keep downloading in the background — even with battery saver on — instead of stalling when you leave the app.",
-    "Heads-up: downloads from earlier versions are not carried over and need to be downloaded again.",
-    "Picture-in-picture playback on Android — the PiP window shows just the video.",
-    "Fixed the home carousel staying paused after a touch-and-hold; autoplay resumes when you let go.",
-    "Player polish: tap the center to pause, seeking back from the end screen resumes playback, and the controls hide after 2 seconds.",
-    "Smoother keyboard and TV remote navigation across the app."
+    "Full TV remote and gamepad navigation: D-pad through every page, a sidebar that remembers where you were, and a player that follows the same keys as a keyboard — seek from the video area, walk the controls one by one, and Back leaves fullscreen first.",
+    "Home, Browse and Details load noticeably faster.",
+    "Downloads that failed because a link expired now fetch a fresh link and carry on instead of erroring forever.",
+    "Watch on tablets: the player stays pinned while the series card and episodes sit below it.",
+    "Browse shows placeholder cards while a page loads instead of a lone spinner.",
+    "Desktop: the app asks before closing while downloads are active, and downloads show their progress on the taskbar.",
+    "A friendlier message when an episode is not out yet, instead of a raw playback error."
   ]
 }
