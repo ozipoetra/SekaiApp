@@ -169,15 +169,15 @@ jobs:
           V="${{ needs.precheck.outputs.version }}"
           NOTES=$(printf '%s' "$CHANGELOG_INPUT" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
           if [ -z "$NOTES" ]; then NOTES="Bug fixes and improvements."; fi
-          if gh release view "v${V}" --repo ozipoetra/data > /dev/null 2>&1; then
-            gh release upload "v${V}" out/* --repo ozipoetra/data --clobber
+          if gh release view "v${V}" --repo ozipoetra/SekaiApp > /dev/null 2>&1; then
+            gh release upload "v${V}" out/* --repo ozipoetra/SekaiApp --clobber
           else
             gh release create "v${V}" out/* \
-              --repo ozipoetra/data \
+              --repo ozipoetra/SekaiApp \
               --title "Sekai v${V}" \
               --notes "$NOTES"
           fi
-          echo "Release: https://github.com/ozipoetra/data/releases/tag/v${V}"
+          echo "Release: https://github.com/ozipoetra/SekaiApp/releases/tag/v${V}"
 
       - name: Update animesekai.json and push
         env:
@@ -187,7 +187,7 @@ jobs:
           VCODE="${{ needs.precheck.outputs.version_code }}"
           MANDATORY="${{ inputs.mandatory }}"
           TODAY=$(date +%F)
-          NOTES_URL="https://github.com/ozipoetra/data/releases/tag/v${V}"
+          NOTES_URL="https://github.com/ozipoetra/SekaiApp/releases/tag/v${V}"
           CHANGELOG_JSON=$(printf '%s' "$CHANGELOG_INPUT" | jq -Rs 'split("\n") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))')
           if [ "$CHANGELOG_JSON" = "[]" ]; then CHANGELOG_JSON='["Bug fixes and improvements."]'; fi
           cd data-repo
@@ -223,9 +223,9 @@ jobs:
           {
             echo "## Published Sekai v${V}"
             echo ""
-            echo "- Release: https://github.com/ozipoetra/data/releases/tag/v${V}"
+            echo "- Release: https://github.com/ozipoetra/SekaiApp/releases/tag/v${V}"
             echo "- Assets: Android universal APK (arm64 + armv7), Windows x64 (msi), Linux x64 (deb + rpm)"
-            echo "- Feed: https://github.com/ozipoetra/data/blob/main/animesekai.json"
+            echo "- Feed: https://github.com/ozipoetra/SekaiApp/blob/main/animesekai.json"
             echo ""
             echo "Installed apps will offer this update on their next launch."
           } >> "$GITHUB_STEP_SUMMARY"
